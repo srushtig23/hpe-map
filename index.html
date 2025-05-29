@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="m-0 h-screen font-sans">
+  <div class="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-white p-4 rounded-lg shadow-lg flex gap-2 flex-wrap max-w-md w-full">
+    <input
+      type="text"
+      id="searchInput"
+      list="suggestions"
+      placeholder="Search location..."
+      class="flex-grow p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      oninput="getSuggestions(this.value)"
+    >
+    <datalist id="suggestions"></datalist>
+    <button
+      onclick="getCurrentLocation()"
+      class="p-2 text-sm bg-white-500 text-white rounded-md hover:bg-blue-600"
+    >
+      📍
+    </button>
+    <button
+      onclick="searchLocation()"
+      class="p-2 text-sm bg-white-500 text-white rounded-md hover:bg-blue-600"
+    >
+      🔍
+    </button>
+  </div>
+  <div id="map" class="h-full w-full"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script defer>
+    const { createClient } = supabase;
+    const _supabase = createClient(
+      'https://vsmvkwawpnwkftfgnjma.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzbXZrd2F3cG53a2Z0Zmduam1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUxMTgwODQsImV4cCI6MjA2MDY5NDA4NH0.Ei9X5KWA76GESSHEiTprvJQLWkEhlwfIyrq3jC-NmcA'
+    );
+  </script>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script src="map.js"></script>
+  <script src="search.js"></script>
+</body>
+</html>
