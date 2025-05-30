@@ -5,7 +5,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 function getStarRating(rating) {
-  const stars = Math.round((10 - rating) / 2);
+  // Default to 5 stars if rating is invalid or missing
+  const safeRating = typeof rating === "number" ? rating : 10;
+  const stars = Math.round((10 - safeRating) / 2); // Convert to 0–5 scale
   return {
     stars,
     display: '★'.repeat(stars) + '☆'.repeat(5 - stars)
@@ -27,8 +29,12 @@ function addPopupMarker(lat, lon, address, rating = 10) {
 async function addTooltipMarker(lat, lon, avgRating, delay = 0) {
   await new Promise(resolve => setTimeout(resolve, delay));
 
+  const safeRating = typeof avgRating === "number" ? avgRating : 10;
   const location = `(${lat.toFixed(3)}, ${lon.toFixed(3)})`;
-  const stars = "★".repeat(5 - Math.floor((10 - avgRating) / 2)).padEnd(5, "☆");
+
+  const stars = Math.round((10 - safeRating) / 2);
+  const goldStars = `<span style="color: #FFD700;">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</span>`;
+  const displayRating = ((10 - safeRating) / 2).toFixed(2);
 
   const circle = L.circle([lat, lon], {
     radius: 5000,
@@ -39,7 +45,7 @@ async function addTooltipMarker(lat, lon, avgRating, delay = 0) {
     zIndexOffset: 1000
   }).addTo(map);
 
-  const popupHtml = `<b>${location}</b><br>Rating: ${stars}`;
+  const popupHtml = `<b>${location}</b><br>Rating: ${goldStars} <b>(${displayRating})</b>`;
   circle.bindPopup(popupHtml, { closeOnClick: false });
 
   circle.on('mouseover', function () {
@@ -48,10 +54,7 @@ async function addTooltipMarker(lat, lon, avgRating, delay = 0) {
   circle.on('mouseout', function () {
     this.closePopup();
   });
-
-  // console.log('Circle added at', lat, lon); 
 }
-
 async function loadCrimeDataFromSupabase() {
   const { data, error } = await _supabase
     .from('CrimeDB')
@@ -85,7 +88,7 @@ data.forEach(({ latt, long, rating }) => {
     return;
   }
 
-  const key = `${latt.toFixed(4)}_${long.toFixed(4)}`;
+  const key = `${latt.toFixed(9)}_${long.toFixed(9)}`;
   const adjustedRating = (10 - rating) / 2;
 
   if (!locationMap.has(key)) {
