@@ -6,10 +6,10 @@ async function searchLocation() {
   }
 
   try {
-    const response = await fetch(`https://corsproxy.io/?https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
     const data = await response.json();
 
-    console.log('Search result:', data);
+    console.log('Search result:', data); // 👈 DEBUG LINE
 
     if (!Array.isArray(data) || data.length === 0) {
       alert('Location not found.');
@@ -22,6 +22,7 @@ async function searchLocation() {
 
     map.setView([+parsedLat, +parsedLon], 14);
 
+    // Try Supabase fetch
     const { data: dbData, error } = await _supabase
       .from('CrimeDB')
       .select('latt, long, rating');
@@ -31,14 +32,15 @@ async function searchLocation() {
     }
 
     let matched = dbData.find(d => {
-      if (d.latt == null || d.long == null) return false;
-      return (
-        parseFloat(d.latt).toFixed(9) === parsedLat &&
-        parseFloat(d.long).toFixed(9) === parsedLon
-      );
-    });
+  if (d.latt == null || d.long == null) return false;
+  return (
+    parseFloat(d.latt).toFixed(9) === parsedLat &&
+    parseFloat(d.long).toFixed(9) === parsedLon
+  );
+});
 
-    let finalRating = 10;
+
+    let finalRating = 10; // default to 5 stars
     if (matched) {
       const adjusted = 10 - matched.rating;
       finalRating = adjusted;
@@ -51,6 +53,8 @@ async function searchLocation() {
   }
 }
 
+
+
 function getCurrentLocation() {
   if (!navigator.geolocation) {
     alert('Geolocation not supported.');
@@ -59,32 +63,28 @@ function getCurrentLocation() {
   navigator.geolocation.getCurrentPosition(position => {
     const { latitude, longitude } = position.coords;
     map.setView([latitude, longitude], 14);
-    fetch(`https://corsproxy.io/?https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
       .then(res => res.json())
       .then(data => {
         const address = data.display_name || 'Your Location';
-        addPopupMarker(latitude, longitude, address, rating = 0);
+        // Simulate rating (0-10)
+        // const rating = Math.floor(Math.random() * 11);
+        addPopupMarker(latitude, longitude, address, rating=0);
       });
   });
 }
 
-// Add debounce for better API usage
-let debounceTimeout;
 function getSuggestions(query) {
-  clearTimeout(debounceTimeout);
   if (query.length < 3) return;
-
-  debounceTimeout = setTimeout(() => {
-    fetch(`https://corsproxy.io/?https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`)
-      .then(res => res.json())
-      .then(data => {
-        const datalist = document.getElementById('suggestions');
-        datalist.innerHTML = '';
-        data.forEach(item => {
-          const option = document.createElement('option');
-          option.value = item.display_name;
-          datalist.appendChild(option);
-        });
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`)
+    .then(res => res.json())
+    .then(data => {
+      const datalist = document.getElementById('suggestions');
+      datalist.innerHTML = '';
+      data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.display_name;
+        datalist.appendChild(option);
       });
-  }, 500); // 500ms debounce
+    });
 }
