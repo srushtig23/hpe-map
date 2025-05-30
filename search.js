@@ -21,11 +21,14 @@ async function searchLocation() {
     .from('CrimeDB')
     .select('latt, long, rating');
 
-  let matched = dbData.find(
-    d =>
-      d.latt.toFixed(9) === parsedLat &&
-      d.long.toFixed(9) === parsedLon
-  );
+let matched = dbData.find(
+  d =>
+    d.latt != null &&
+    d.long != null &&
+    d.latt.toFixed(9) === parsedLat &&
+    d.long.toFixed(9) === parsedLon
+);
+
 
   let finalRating = 10; 
   if (matched) {
