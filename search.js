@@ -16,7 +16,7 @@ async function searchLocation() {
 
   map.setView([+parsedLat, +parsedLon], 14);
 
-  // Try to fetch rating from Supabase if location matches
+
   const { data: dbData, error } = await _supabase
     .from('CrimeDB')
     .select('latt, long, rating');
