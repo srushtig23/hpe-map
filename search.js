@@ -1,58 +1,40 @@
 async function searchLocation() {
-  const query = document.getElementById('searchInput').value.trim();
-  if (!query) {
-    alert('Please enter a location');
+  const query = document.getElementById('searchInput').value;
+  if (!query) return;
+
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+  const data = await response.json();
+
+  if (!data.length) {
+    alert('Location not found.');
     return;
   }
 
-  try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-    const data = await response.json();
+  const { lat, lon, display_name } = data[0];
+  const parsedLat = parseFloat(lat).toFixed(9);
+  const parsedLon = parseFloat(lon).toFixed(9);
 
-    console.log('Search result:', data); // 👈 DEBUG LINE
+  map.setView([+parsedLat, +parsedLon], 14);
 
-    if (!Array.isArray(data) || data.length === 0) {
-      alert('Location not found.');
-      return;
-    }
+  // Try to fetch rating from Supabase if location matches
+  const { data: dbData, error } = await _supabase
+    .from('CrimeDB')
+    .select('latt, long, rating');
 
-    const { lat, lon, display_name } = data[0];
-    const parsedLat = parseFloat(lat).toFixed(9);
-    const parsedLon = parseFloat(lon).toFixed(9);
-
-    map.setView([+parsedLat, +parsedLon], 14);
-
-    // Try Supabase fetch
-    const { data: dbData, error } = await _supabase
-      .from('CrimeDB')
-      .select('latt, long, rating');
-
-    if (error) {
-      console.error('Supabase error:', error);
-    }
-
-    let matched = dbData.find(d => {
-  if (d.latt == null || d.long == null) return false;
-  return (
-    parseFloat(d.latt).toFixed(9) === parsedLat &&
-    parseFloat(d.long).toFixed(9) === parsedLon
+  let matched = dbData.find(
+    d =>
+      d.latt.toFixed(9) === parsedLat &&
+      d.long.toFixed(9) === parsedLon
   );
-});
 
-
-    let finalRating = 10; // default to 5 stars
-    if (matched) {
-      const adjusted = 10 - matched.rating;
-      finalRating = adjusted;
-    }
-
-    addPopupMarker(+parsedLat, +parsedLon, display_name, finalRating);
-  } catch (err) {
-    console.error('Search error:', err);
-    alert('Something went wrong while searching. Try again later.');
+  let finalRating = 10; // Default to 5 stars
+  if (matched) {
+    const adjusted = (10 - matched.rating); // Convert to 0–10 scale
+    finalRating = adjusted;
   }
-}
 
+  addPopupMarker(+parsedLat, +parsedLon, display_name, finalRating);
+}
 
 
 function getCurrentLocation() {
