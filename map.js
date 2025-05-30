@@ -5,9 +5,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 function getStarRating(rating) {
-  // Default to 5 stars if rating is invalid or missing
+  
   const safeRating = typeof rating === "number" ? rating : 10;
-  const stars = Math.round((10 - safeRating) / 2); // Convert to 0–5 scale
+  const stars = Math.round((10 - safeRating) / 2); 
   return {
     stars,
     display: '★'.repeat(stars) + '☆'.repeat(5 - stars)
@@ -60,26 +60,14 @@ async function loadCrimeDataFromSupabase() {
     .from('CrimeDB')
     .select('latt, long, rating');
 
-  // if (error) {
-  //   console.error('Error fetching Supabase data:', error);
-  //   // Mock data for testing
-  //   const mockData = [
-  //     { latt: 12.9743, long: 77.5921, rating: 4 },
-  //     { latt: 12.9696, long: 77.5936, rating: 6 },
-  //     { latt: 12.9881, long: 77.6226, rating: 2 }
-  //   ];
-  //   console.warn('Using mock data due to Supabase error');
-  //   return mockData;
-  // }
 
   // console.log('Supabase data loaded:', data); 
 
   const locationMap = new Map();
 
-//  const locationMap = new Map();
+
 
 data.forEach(({ latt, long, rating }) => {
-  // Skip if coordinates or rating are invalid
   if (
     typeof latt !== "number" ||
     typeof long !== "number" ||

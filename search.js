@@ -27,9 +27,9 @@ async function searchLocation() {
       d.long.toFixed(9) === parsedLon
   );
 
-  let finalRating = 10; // Default to 5 stars
+  let finalRating = 10; 
   if (matched) {
-    const adjusted = (10 - matched.rating); // Convert to 0–10 scale
+    const adjusted = (10 - matched.rating);
     finalRating = adjusted;
   }
 
@@ -49,8 +49,7 @@ function getCurrentLocation() {
       .then(res => res.json())
       .then(data => {
         const address = data.display_name || 'Your Location';
-        // Simulate rating (0-10)
-        // const rating = Math.floor(Math.random() * 11);
+    
         addPopupMarker(latitude, longitude, address, rating=0);
       });
   });
