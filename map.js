@@ -5,14 +5,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 function getStarRating(rating) {
-  
   const safeRating = typeof rating === "number" ? rating : 10;
-  const stars = Math.round((11 - safeRating) / 2); 
+  let stars = Math.round((11 - safeRating) / 2);
+
+  // Clamp stars to range [0, 5]
+  stars = Math.max(0, Math.min(5, stars));
+
   return {
     stars,
     display: '★'.repeat(stars) + '☆'.repeat(5 - stars)
   };
 }
+
 
 function addPopupMarker(lat, lon, address, rating = 10) {
   const { display, stars } = getStarRating(rating);
@@ -32,7 +36,8 @@ async function addTooltipMarker(lat, lon, avgRating, delay = 0) {
   const safeRating = typeof avgRating === "number" ? avgRating : 10;
   const location = `(${lat.toFixed(3)}, ${lon.toFixed(3)})`;
 
-  const stars = Math.round((11 - safeRating) / 2);
+  let stars = Math.round((11 - safeRating) / 2);
+  stars = Math.max(0, Math.min(5, stars));
   const goldStars = `<span style="color: #FFD700;">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</span>`;
   const displayRating = ((11 - safeRating) / 2).toFixed(2);
 
@@ -71,7 +76,8 @@ data.forEach(({ latt, long, rating }) => {
   if (
     typeof latt !== "number" ||
     typeof long !== "number" ||
-    typeof rating !== "number"
+    typeof rating !== "number" ||
+    rating < 0 || rating > 10
   ) {
     return;
   }
