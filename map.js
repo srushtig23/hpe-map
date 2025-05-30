@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 function getStarRating(rating) {
   
   const safeRating = typeof rating === "number" ? rating : 10;
-  const stars = Math.round((10 - safeRating) / 2); 
+  const stars = Math.round((11 - safeRating) / 2); 
   return {
     stars,
     display: '★'.repeat(stars) + '☆'.repeat(5 - stars)
@@ -32,9 +32,9 @@ async function addTooltipMarker(lat, lon, avgRating, delay = 0) {
   const safeRating = typeof avgRating === "number" ? avgRating : 10;
   const location = `(${lat.toFixed(3)}, ${lon.toFixed(3)})`;
 
-  const stars = Math.round((10 - safeRating) / 2);
+  const stars = Math.round((11 - safeRating) / 2);
   const goldStars = `<span style="color: #FFD700;">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</span>`;
-  const displayRating = ((10 - safeRating) / 2).toFixed(2);
+  const displayRating = ((11 - safeRating) / 2).toFixed(2);
 
   const circle = L.circle([lat, lon], {
     radius: 5000,
@@ -77,7 +77,7 @@ data.forEach(({ latt, long, rating }) => {
   }
 
   const key = `${latt.toFixed(9)}_${long.toFixed(9)}`;
-  const adjustedRating = (10 - rating) / 2;
+  const adjustedRating = (11 - rating) / 2;
 
   if (!locationMap.has(key)) {
     locationMap.set(key, { latt, long, ratings: [adjustedRating] });
@@ -91,8 +91,8 @@ data.forEach(({ latt, long, rating }) => {
   locationMap.forEach(({ latt, long, ratings }) => {
     const avgRating = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
     if (avgRating < 3) {
-      unsafePoints.push([latt, long, (10 - avgRating * 2) / 10]);
-      addTooltipMarker(latt, long, 10 - avgRating * 2);
+      unsafePoints.push([latt, long, (11 - avgRating * 2) / 10]);
+      addTooltipMarker(latt, long, 11 - avgRating * 2);
     }
   });
 
