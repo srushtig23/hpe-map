@@ -60,6 +60,10 @@ function getCurrentLocation() {
 
 function getSuggestions(query) {
   if (query.length < 3) return;
+
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  loadingIndicator.style.display = 'inline';
+
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`)
     .then(res => res.json())
     .then(data => {
@@ -70,5 +74,11 @@ function getSuggestions(query) {
         option.value = item.display_name;
         datalist.appendChild(option);
       });
+    })
+    .catch(err => {
+      console.error('Suggestion fetch error:', err);
+    })
+    .finally(() => {
+      loadingIndicator.style.display = 'none';
     });
 }

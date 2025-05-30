@@ -30,6 +30,31 @@
     >
       🔍
     </button>
+    <input list="suggestions" id="searchInput" oninput="getSuggestions(this.value)">
+<datalist id="suggestions"></datalist>
+<div id="loadingIndicator" style="display: none; font-size: 14px; color: gray;">Loading...</div>
+<div id="loadingIndicator" style="display:none;">
+  <span class="loader"></span> Loading...
+</div>
+
+<style>
+  .loader {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
   </div>
   <div id="map" class="h-full w-full"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
