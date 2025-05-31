@@ -10,6 +10,24 @@ body, html {
   width: 100%;
 }
 
+/* Search bar styling */
+#searchInput {
+  border: none !important; /* Remove any borders */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for classy look */
+  border-radius: 9999px !important; /* Fully rounded edges */
+  padding-right: 40px !important; /* Space for the icon */
+  transition: box-shadow 0.3s ease;
+}
+
+#searchInput:focus {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on focus */
+}
+
+#searchInput::placeholder {
+  color: #9ca3af; /* Gray placeholder text */
+  font-style: italic;
+}
+
 .loader {
   border: 3px solid #f3f3f3;
   border-top: 3px solid #3498db;

@@ -11,22 +11,27 @@
 <body class="font-sans h-screen m-0 overflow-hidden bg-gray-100">
 
   <!-- Controls -->
-  <div class="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-white p-4 rounded-xl shadow-xl flex flex-col items-center gap-2 w-[95%] sm:max-w-xl">
-    <div class="flex w-full gap-2 items-center">
+  <div class="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-[95%] sm:max-w-xl">
+    <div class="flex w-full gap-2 items-center relative">
       <input
         type="text"
         id="searchInput"
         list="suggestions"
-        placeholder="Search location..."
-        class="flex-grow px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Search for a location..."
+        class="flex-grow px-4 py-2 text-sm rounded-full focus:outline-none focus:ring-0 bg-white shadow-md w-full pr-10"
         oninput="getSuggestions(this.value)"
         onkeypress="if(event.key === 'Enter') searchLocation()"
       />
       <button
         onclick="searchLocation()"
         title="Search"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-all"
-      >🔍</button>
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-all"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
     </div>
     <div id="loadingIndicator" class="text-xs text-blue-500 mt-1 hidden animate-pulse">🔄 Fetching suggestions...</div>
     <datalist id="suggestions"></datalist>
