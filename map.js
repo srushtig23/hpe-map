@@ -1,3 +1,4 @@
+// 91% of storage used … If you run out of space, you can't save to Drive or back up Google Photos. Get 30 GB of storage for ₹59.00 ₹15.00/month for 3 months.
 const map = L.map('map').setView([12.9716, 77.5946], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -121,4 +122,3 @@ data.forEach(({ latt, long, rating }) => {
 }
 
 loadCrimeDataFromSupabase();
-

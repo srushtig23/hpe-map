@@ -8,45 +8,22 @@ body, html {
 #map {
   height: 100vh;
   width: 100%;
-  position: relative;
 }
 
-/* Floating controls */
-.controls {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  animation: spin 1s linear infinite;
 }
 
-.controls input,
-.controls button {
-  margin: 5px 0;
-  padding: 8px;
-  width: 200px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.controls button {
-  cursor: pointer;
-  background: linear-gradient(to right, #cc0000, #ff4d4d);
-  color: white;
-  font-weight: bold;
-  border: none;
-  transition: background 0.3s ease;
-}
-
-.controls button:hover {
-  background: linear-gradient(to right, #b30000, #e60000);
-}
-
-/* Leaflet popup styling */
 .leaflet-popup-content-wrapper {
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
@@ -61,18 +38,4 @@ body, html {
 
 .leaflet-popup-tip {
   background-color: rgba(255, 255, 255, 0.95);
-}
-
-/* Responsive */
-@media screen and (max-width: 600px) {
-  .controls {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-  }
-
-  .controls input,
-  .controls button {
-    width: 100%;
-  }
 }
