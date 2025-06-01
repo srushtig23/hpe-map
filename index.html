@@ -2,53 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Safety Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="font-sans h-screen m-0 overflow-hidden bg-gray-100">
+<body class="font-sans h-screen m-0 overflow-hidden bg-gray-100 transition-colors duration-300" id="body">
 
   <!-- Controls -->
-  <div class="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-[95%] sm:max-w-xl">
-    <div class="flex w-full gap-2 items-center relative">
-      <input
-        type="text"
-        id="searchInput"
-        list="suggestions"
-        placeholder="Search for a location..."
-        class="flex-grow px-4 py-2 text-sm rounded-full focus:outline-none focus:ring-0 bg-white shadow-md w-full pr-10"
-        oninput="getSuggestions(this.value)"
-        onkeypress="if(event.key === 'Enter') searchLocation()"
-      />
-      <button
-        onclick="searchLocation()"
-        title="Search"
-        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-all"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </button>
+  <div class="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3 w-[95%] sm:max-w-xl">
+    <!-- Styled Search Bar -->
+    <div class="w-full px-4 py-3 rounded-2xl backdrop-blur-md bg-white/90 shadow-xl">
+      <div class="relative w-full">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search places..."
+          class="w-full px-4 py-3 text-base rounded-xl bg-white border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          oninput="getSuggestions(this.value)"
+          onkeydown="if(event.key === 'Enter') searchLocation()"
+        />
+        <button
+          onclick="searchLocation()"
+          title="Search"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="loadingIndicator" class="text-sm text-blue-600 mt-2 hidden animate-pulse flex items-center gap-2">
+        <div class="w-4 h-4 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+        <span>Fetching suggestions...</span>
+      </div>
+      <ul id="suggestionsList" class="mt-2 rounded-lg bg-white shadow-md max-h-64 overflow-y-auto divide-y divide-gray-100 hidden">
+        <!-- Populated by JS -->
+      </ul>
     </div>
-    <div id="loadingIndicator" class="text-xs text-blue-500 mt-1 hidden animate-pulse">🔄 Fetching suggestions...</div>
-    <datalist id="suggestions"></datalist>
   </div>
 
-  <!-- Floating location icon (with embedded SVG) -->
+  <!-- Location Button -->
   <button
     onclick="getCurrentLocation()"
     title="Use current location"
     class="fixed bottom-28 right-12 z-50 bg-white p-3 rounded-full shadow-md hover:shadow-xl border border-gray-300"
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" viewBox="0 -960 960 960" fill="currentColor">
-      <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-120q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm0-80Z"/>
+      <path d="M440-42v-80q-125-14-214.5-103.5T122-440H42v-80h80q14-125 103.5-214.5T440-838v-80h80v80q125 14 214.5 103.5T838-520h80v80h-80q-14 125-103.5 214.5T520-122v80h-80Zm40-158q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Z"/>
     </svg>
   </button>
 
-  <!-- Map container -->
+  <!-- Map -->
   <div id="map" class="h-full w-full z-0"></div>
 
   <!-- Scripts -->

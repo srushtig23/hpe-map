@@ -1,22 +1,43 @@
+
 function showLoading(isLoading) {
   const loader = document.getElementById('loadingIndicator');
   loader.style.display = isLoading ? 'block' : 'none';
 }
 
-function getSuggestions(query) {
-  showLoading(true);
+function clearSuggestions() {
+  const list = document.getElementById('suggestionsList');
+  list.innerHTML = '';
+  list.classList.add('hidden');
+}
 
+function showSuggestions(data) {
+  const list = document.getElementById('suggestionsList');
+  list.innerHTML = '';
+
+  if (!data.length) return clearSuggestions();
+
+  data.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item.display_name;
+    li.className = 'suggestion-item px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm';
+    li.onclick = () => {
+      document.getElementById('searchInput').value = item.display_name;
+      clearSuggestions();
+      searchLocation();
+    };
+    list.appendChild(li);
+  });
+
+  list.classList.remove('hidden');
+}
+
+function getSuggestions(query) {
+  if (!query.trim()) return clearSuggestions();
+
+  showLoading(true);
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`)
     .then(res => res.json())
-    .then(data => {
-      const datalist = document.getElementById('suggestions');
-      datalist.innerHTML = '';
-      data.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.display_name;
-        datalist.appendChild(option);
-      });
-    })
+    .then(showSuggestions)
     .catch(err => console.error('Suggestion fetch error:', err))
     .finally(() => showLoading(false));
 }
@@ -55,6 +76,7 @@ async function searchLocation() {
     console.error('Search error:', err);
   } finally {
     showLoading(false);
+    clearSuggestions();
   }
 }
 
@@ -76,3 +98,12 @@ function getCurrentLocation() {
       });
   });
 }
+
+// Auto-dismiss suggestion box on outside click
+window.addEventListener('click', (e) => {
+  const input = document.getElementById('searchInput');
+  const suggestions = document.getElementById('suggestionsList');
+  if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+    clearSuggestions();
+  }
+});
